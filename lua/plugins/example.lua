@@ -44,8 +44,7 @@ return {
     dependencies = { "hrsh7th/cmp-emoji" },
     ---@param opts cmp.ConfigSchema
     opts = function(_, opts)
-      local cmp = require("cmp")
-      opts.sources = cmp.config.sources(vim.list_extend(opts.sources, { { name = "emoji" } }))
+      table.insert(opts.sources, { name = "emoji" })
     end,
   },
 
@@ -220,14 +219,18 @@ return {
       return {}
     end,
   },
-  -- then: setup supertab in cmp
   {
     "hrsh7th/nvim-cmp",
     dependencies = {
       "hrsh7th/cmp-emoji",
+      "zbirenbaum/copilot-cmp", -- Copilot CMP dependency
     },
     ---@param opts cmp.ConfigSchema
     opts = function(_, opts)
+      -- Add Copilot as a source for nvim-cmp
+      table.insert(opts.sources, 1, { name = "copilot", group_index = 1, priority = 100 })
+
+      -- Your existing nvim-cmp configuration
       local has_words_before = function()
         unpack = unpack or table.unpack
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -241,8 +244,6 @@ return {
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_next_item()
-            -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
-            -- this way you will only jump inside the snippet region
           elseif luasnip.expand_or_jumpable() then
             luasnip.expand_or_jump()
           elseif has_words_before() then
@@ -261,6 +262,15 @@ return {
           end
         end, { "i", "s" }),
       })
+    end,
+    config = function(_, opts) -- Copilot CMP configuration
+      local copilot_cmp = require("copilot_cmp")
+      copilot_cmp.setup(opts)
+      require("lazyvim.util").lsp.on_attach(function(client)
+        if client.name == "copilot" then
+          copilot_cmp._on_insert_enter({})
+        end
+      end)
     end,
   },
 }

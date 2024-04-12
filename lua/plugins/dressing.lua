@@ -1,3 +1,5 @@
+-- lua/plugins/dresssing.lua
+
 return {
 	{
 		"stevearc/dressing.nvim",

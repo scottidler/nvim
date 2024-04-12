@@ -1,3 +1,5 @@
+-- lua/plugings/vim-sleuth.lua
+
 return {
     {
         "tpope/vim-sleuth",

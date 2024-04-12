@@ -1,3 +1,5 @@
+-- lua/plugins/oil.lua
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "oil",
   callback = function()

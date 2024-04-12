@@ -1,3 +1,5 @@
+-- lua/plugings/lsp.lua
+
 return {
 	{
 		"neovim/nvim-lspconfig",

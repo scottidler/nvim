@@ -1,12 +1,24 @@
--- https://github.com/LazyVim/LazyVim/pull/6354
+-- lua/plugins/bufferline.lua
 return {
   {
     "akinsho/bufferline.nvim",
-    init = function()
-      local bufline = require("catppuccin.groups.integrations.bufferline")
-      function bufline.get()
-        return bufline.get_theme()
+    event = "VeryLazy",
+    dependencies = {
+      { "catppuccin/nvim", name = "catppuccin" },
+    },
+    opts = function()
+      local highlights
+      local ok, cat = pcall(require, "catppuccin.groups.integrations.bufferline")
+      if ok and cat and type(cat.get) == "function" then
+        highlights = cat.get() -- equivalent to your get_theme wrapper
       end
+      return {
+        highlights = highlights,
+        options = {
+          diagnostics = "nvim_lsp",
+          separator_style = "slant",
+        },
+      }
     end,
   },
 }
